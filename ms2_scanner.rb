@@ -23,27 +23,30 @@ ibtl_tokens = {
 '/'	=> '/',
 '-'	=> '-',
 '*'	=> '*',
-'%'	=> 'T_MOD'
+'%'	=> 'T_MOD',
 'sin'	=> 'T_TRIG',
 'cos'	=> 'T_TRIG',
 'tan'	=> 'T_TRIG',
-/(TRUE|FALSE)/	=> 'T_BOOL'
+/(TRUE|FALSE)/	=> 'T_BOOL',
 'int'	=> 'T_INT',
-'float'	=>	'T_FLOAT'
+'float'	=>	'T_FLOAT',
 /\d*/	=> 'T_DIGIT',
-/\d*\.\d*/ => 'T_FDIGIT'
-/\w+/	=> 
+/\d*\.\d*/ => 'T_FDIGIT',
+/\w+/	=> 'T_ID'
+}
 result = ibtl_tokens[new_t]
 return result
-}
-def lexer(s_file)
-lexemes = open(s_file)
-//.match(lexemes)
+end
 
-" "+/(\/|+|-|*|/+" "
+def lexer(s_file)
+src_f = open(s_file)
+lexemes = src_f.each_line{|line|}
+puts lexemes
+
+#" "+/(\/|+|-|*|/+" "
 #(+ 1 2)
-for i in lexemes.length
-case
+#for i in lexemes.length
+#case
 
 
 
@@ -52,6 +55,6 @@ case
 end
 
 
-
+lexer(ARGV[0])
 
 
