@@ -41,13 +41,12 @@ end
 def lexer(s_file)
 	
 	text = File.open(s_file.to_s, "r").read
-	#[+\/*%-\(\)]
-	output = text.split(/([+\/*\-\(\)=])/).join(' ') 
-	puts output
-	
+	output = text.split(/([+\-\/*%\(\)=])/).join(' ')
+	tokens = output.map
 end
-# "+/(\/|+|-|*|/+" "
+#" "+/(\/|+|-|*|/+" "
 #(+ 1 2)
 #for i in lexemes.length
 #case
 txt_out = lexer(ARGV[0].to_s)
+puts txt_out
