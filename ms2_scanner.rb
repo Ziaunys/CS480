@@ -39,22 +39,15 @@ return result
 end
 
 def lexer(s_file)
-src_f = open(s_file)
-lexemes = src_f.each_line{|line|}
-puts lexemes
-
-#" "+/(\/|+|-|*|/+" "
+	
+	text = File.open(s_file.to_s, "r").read
+	#[+\/*%-\(\)]
+	output = text.split(/([+\/*\-\(\)=])/).join(' ') 
+	puts output
+	
+end
+# "+/(\/|+|-|*|/+" "
 #(+ 1 2)
 #for i in lexemes.length
 #case
-
-
-
-
-
-end
-
-
-lexer(ARGV[0])
-
-
+txt_out = lexer(ARGV[0].to_s)
