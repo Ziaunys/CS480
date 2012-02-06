@@ -1,12 +1,18 @@
 #!/usr/local/bin/ruby -w
 
 class Tokens
-	def new(id,value)
+	def initialize(id,value)
+	@id = id
+	@value = value
 	end
 end
 
 
 def tokenize(new_t)
+new_t.to_s
+new_t.sub!(/\d+/, 'T_DIGIT')
+new_t.sub!(/\d+\.\d+/, 'T_FDIGIT')
+new_t.sub!(/\w+/,'T_ID')
 ibtl_tokens = {
 'if'	=> 'T_IF',
 'while' => 'T_WHILE',
@@ -30,19 +36,21 @@ ibtl_tokens = {
 /(TRUE|FALSE)/	=> 'T_BOOL',
 'int'	=> 'T_INT',
 'float'	=>	'T_FLOAT',
-/\d*/	=> 'T_DIGIT',
-/\d*\.\d*/ => 'T_FDIGIT',
-/\w+/	=> 'T_ID'
 }
-result = ibtl_tokens[new_t]
-return result
+token = ibtl_tokens[new_t]
+if token != nil
+return token
+else
+return new_t
 end
-
+end
 def lexer(s_file)
-	
 	text = File.open(s_file.to_s, "r").read
-	output = text.split(/([+\-\/*%\(\)=])/).join(' ')
-	tokens = output.map
+	output = (text.split(/([+\-\/*%\(\)=])/).join(' ')).split(/\s+/)
+	output.length.times do |i|
+	output[i] = tokenize(output[i])
+	end
+	return output
 end
 #" "+/(\/|+|-|*|/+" "
 #(+ 1 2)
