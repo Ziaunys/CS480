@@ -1,19 +1,27 @@
 #!/usr/local/bin/ruby -w
 
+
+
+# Class Tokens is an object for storing tokens. It simply consists of attributes 
+# which are the name of the lexeme itself and the token type.
 class Tokens
 	def initialize(id,value)
 	@id = id
 	@value = value
 	end
 	def to_s
-	puts "["+@value + " " +@id+"]"
+	puts "["+@value + ", " +@id+"]"
 	
 	end
 end
 
-
+# Tokenize passing a token to gsub which matches and replaces the token name with its type.
 def tokenize(new_t)
 
+new_t.sub!('!=','T_NEQ')
+if new_t == 'T_NEQ'
+return new_t
+end
 new_t.gsub!(/\d+\.\d+/,'T_FDIG')
 if new_t == 'T_FDIG'
 return new_t
@@ -56,10 +64,6 @@ return new_t
 end
 new_t.sub!('=','T_ASS')
 if new_t == 'T_ASS'
-return new_t
-end
-new_t.sub!('!=','T_NEQ')
-if new_t == 'T_NEQ'
 return new_t
 end
 new_t.sub!('&&','T_AND')
@@ -130,11 +134,15 @@ return nil
 end
 def lexer(s_file)
 	text = File.open(s_file.to_s, "r").read
-	puts text.split
+	t_coll = []
 	output = ((text.split(/(>=|<=|==|[\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
-	puts output
+	names = ((text.split(/(>=|<=|==|[\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
 	output.each { |i| tokenize(i) }
 	
+	output.each_index do |j|
+		t_coll << Tokens.new(output[j],names[j])
+	end
+	return t_coll
 end
 txt_out = lexer(ARGV[0].to_s)
 puts txt_out
