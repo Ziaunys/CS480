@@ -17,13 +17,20 @@ end
 
 # Tokenize passing a token to gsub which matches and replaces the token name with its type.
 def tokenize(new_t)
-
-new_t.sub!('!=','T_NEQ')
-if new_t == 'T_NEQ'
+new_t.sub!(/\d+\.\d+/,'T_FDIG')
+if new_t == 'T_FDIG'
 return new_t
 end
-new_t.gsub!(/\d+\.\d+/,'T_FDIG')
-if new_t == 'T_FDIG'
+new_t.sub!(/\blog\b/,'T_LOG')
+if new_t == 'T_LOG'
+return new_t
+end
+new_t.sub!('^','T_POW')
+if new_t == 'T_POW'
+return new_t
+end
+new_t.sub!('!=','T_NEQ')
+if new_t == 'T_NEQ'
 return new_t
 end
 new_t.sub!(/\bfloat\b/,'T_FLOAT')
@@ -135,13 +142,15 @@ end
 def lexer(s_file)
 	text = File.open(s_file.to_s, "r").read
 	t_coll = []
-	output = ((text.split(/(>=|<=|==|[\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
-	names = ((text.split(/(>=|<=|==|[\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
+	output = ((text.split(/(>=|<=|==|[\^\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
+	names = ((text.split(/(>=|<=|==|[\^\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
+	puts output
 	output.each { |i| tokenize(i) }
 	
-	output.each_index do |j|
-		t_coll << Tokens.new(output[j],names[j])
+	output.length.times do |i|
+	t_coll << Tokens.new(output[i],names[i])
 	end
+	
 	return t_coll
 end
 txt_out = lexer(ARGV[0].to_s)
