@@ -1,0 +1,6 @@
+In order to test the analyzer run the following command:
+
+ruby ms2_scanner.rb test_expr.ibtl
+
+The output of this program is the to_s (toString) function of the Token object 
+and will be displayed as a pair such as [NAME, TOKEN_ID]
