@@ -1,10 +1,11 @@
 #!/usr/local/bin/ruby -w
 
-
+#Program: Lexical analyzer for Milestone 2 in CS480
 
 # Class Tokens is an object for storing tokens. It simply consists of attributes 
 # which are the name of the lexeme itself and the token type.
 class Tokens
+	attr_accessor :id, :value
 	def initialize(id,value)
 	@id = id
 	@value = value
@@ -15,8 +16,24 @@ class Tokens
 	end
 end
 
-# Tokenize passing a token to gsub which matches and replaces the token name with its type.
+# Tokenize passes a token to sub which matches and replaces the token name with its type.
 def tokenize(new_t)
+new_t.sub!(/\b[0-9]+e[0-9]*\b/, 'T_FLOAT')
+if new_t == 'T_ASS'
+return new_t
+end
+new_t.sub!(/\bassign\b/,'T_ASS')
+if new_t == 'T_ASS'
+return new_t
+end
+new_t.sub!(/\bprintln\b/,'T_PRINT')
+if new_t == 'T_PRINT'
+return new_t
+end
+new_t.sub!(/\blet\b/,'T_LET')
+if new_t == 'T_LET'
+return new_t
+end
 new_t.sub!(/\d+\.\d+/,'T_FDIG')
 if new_t == 'T_FDIG'
 return new_t
@@ -65,12 +82,8 @@ new_t.sub!('>=','T_GTEQ')
 if new_t == 'T_GTEQ'
 return new_t
 end
-new_t.sub!('==','T_EQ')
+new_t.sub!('=','T_EQ')
 if new_t == 'T_EQ'
-return new_t
-end
-new_t.sub!('=','T_ASS')
-if new_t == 'T_ASS'
 return new_t
 end
 new_t.sub!('&&','T_AND')
@@ -144,14 +157,11 @@ def lexer(s_file)
 	t_coll = []
 	output = ((text.split(/(>=|<=|==|[\^\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
 	names = ((text.split(/(>=|<=|==|[\^\+\-\/\*%\(\)=]|!=)/).join(' ')).split(/\s+/))
-	puts output
+#	puts output
 	output.each { |i| tokenize(i) }
-	
 	output.length.times do |i|
 	t_coll << Tokens.new(output[i],names[i])
 	end
-	
 	return t_coll
 end
-txt_out = lexer(ARGV[0].to_s)
-puts txt_out
+
