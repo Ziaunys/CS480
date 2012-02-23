@@ -5,24 +5,54 @@ require 'ms2_scanner.rb'
 
 class PARSE_TREE
 #Contains object methods for a standard binary tree.
+attr_accessor :root
+def initialize(root=nil)
+    @root = root
+end
     class Node
-    attr_reader :val, :left_child, :right_child
+    attr_accessor :val, :left_child, :right_child
     #Defines the node object for PARSE_TREE
-        def initialize(val, left_child = nil, right_child = nil)
+        def initialize(val , left_child = nil, right_child = nil)
 	    @val = val
 	    @left_child, @right_child = left_child, right_child
 	end
-	def insert(val)
-	    @left_child.nil? ? @left_child = Node.new(val): @right_child.nil? ? @righ_child = Node.new(val): @left_child.insert(val)
+	def insert_left(val)
+            puts 'inserting_left ' + val
+	    (@left_child = Node.new(val)) if @left_child.nil?
         end
+	def insert_right(val)
+	    puts 'inserting_left ' + val
+	    (@right_child = Node.new(val)) if @right_child.nil?
+	end
+	def to_s
+	puts @val + ' in to_s'
+	end 
+     end
+
 
 	
+def add_left(val)
+    if(@root.nil?)
+	puts 'inserting root' + val
     end
+    @root.nil? ?  @root = Node.new(val): @root.insert_left(val) 
+end
 
-    def traverse(root)
-	puts root.val
-	root.left_child.nil? ? traverse(root.right_child): traverse(root.left_child)
+def add_left(val)
+    if(@root.nil?)
+	puts 'inserting root' + val
     end
+    @root.nil? ?  @root = Node.new(val): @root.insert_right(val) 
+end
+
+    
+
+def traverse(node=@root)
+node.to_s
+node.left_child.nil? ? traverse(node.right_child): traverse(node.left_child)
+end
+
+
 end
 	
 def expr(t_stream,index,p_tree)
@@ -95,18 +125,25 @@ when 'T_ASS'
 p_tree.insert('T_ASS')
 statem(t_stream,index+1,p_tree)
 statem(t_stream,index+2,p_tree)
-
 end
 end
 
 def parser(s_file)
 t_stream = lexer(s_file.to_s)
+t_stream << '$'
 if(t_stream[0] == 'T_LPAR')
-p_tree = PARSE_TREE::Node.new('T_LPAR')
+p_tree = PARSE_TREE::Node.new('S')
 expr(t_stream,0,p_tree)
-p_tree.traverse()
+PARSE_TREE.traverse(p_tree)
 end
 end
 #t_stream.each { |i| puts i.id }
-parser(ARGV[0].to_s)
+#parser(ARGV[0].to_s)
 
+p_tree = PARSE_TREE.new()
+p_tree.add_left('+')
+p_tree.add_left('-')
+p_tree.add_left('2')
+p_tree.add_right('5')
+p_tree.add_right('3')
+p_tree.traverse(p_tree.root)
