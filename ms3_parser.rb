@@ -28,18 +28,26 @@ when 'T_GT'
 return true
 when 'T_LT'
 return true
+when 'T_ASS'
+return true
+else
+return false
+end
+end
+
+def isAtom(token)
+case token
 when 'T_ID'
 return true
 when 'T_IDIG'
 return true
 when 'T_DIG'
 return true
-when 'T_ASS'
+when 'T_BOOL'
 return true
 else
 return false
 end
-
 end
 
 def F(t_stream,index)
@@ -56,15 +64,16 @@ else
 return "ERROR"
 end
 end
-def S(t_stream,index)
 
+def S(t_stream,index)
 case t_stream[index]
 when 'T_LPAR'
     case t_stream[index+1].id
     when 'T_LPAR'
 
+if(isBinOp(t_stream[index].id == true)
 
-if(isBinOp(t_stream[index].id)
+elsif(isAtom(t_stream[index].id == true)
 
 end
 
