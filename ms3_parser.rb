@@ -64,7 +64,7 @@ puts 'in F'
 puts $p_stream[$p_index]
 T()
 F()
-elsif($p_stream[$p_index].id == '$')
+elsif($p_stream[$p_index].id == 'T_EOF')
 return 'Parse complete. .'
 else
 return puts "ERROR"
@@ -75,8 +75,9 @@ def T()
 puts 'in T'
 puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
+	$p_index+=1
 	S()
-	if($p_stream[$p_index].id == 'R_PAR')
+	if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
 	else
         puts "ERROR"
@@ -91,7 +92,7 @@ end
 def S()
 puts 'in S'
 puts $p_stream[$p_index]
-if($p_stream[$p_index].id == 'T_RPAR')
+if($p_stream[$p_index].id == 'T_LPAR')
     	$p_index+=1
 	S1()
 elsif(isAtom($p_stream[$p_index].id) == true)
