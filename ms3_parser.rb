@@ -79,7 +79,8 @@ if($p_stream[$p_index].id == 'T_LPAR')
 	if($p_stream[$p_index].id == 'R_PAR')
 	$p_index+=1
 	else
-	return puts "ERROR"
+        puts "ERROR"
+	Process.exit
 	end
 else
 puts "ERROR"
@@ -121,7 +122,7 @@ elsif($p_stream[$p_index].id == 'T_RPAR')
 elsif(isAtom($p_stream[$p_index].id) == true)
     S() 
     if($p_stream[$p_index].id == 'T_RPAR')
-	index+=1
+	$p_index+=1
     else
     puts "ERROR"
     Process.exit
