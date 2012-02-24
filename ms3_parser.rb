@@ -59,19 +59,21 @@ end
 end
 
 def F()
-if($p_stream[$p_index].id == 'L_PAR') 
-puts 'in F @index ' + $p_index
+if($p_stream[$p_index].id == 'T_LPAR') 
+puts 'in F'
 puts $p_stream[$p_index]
-
-
 T()
 F()
 elsif($p_stream[$p_index].id == '$')
 return 'Parse complete. .'
+else
+return puts "ERROR"
 end
 end
 #-------------------------------
 def T()
+puts 'in T'
+puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
 	S()
 	if($p_stream[$p_index].id == 'R_PAR')
@@ -85,6 +87,8 @@ end
 end
 #-------------------------------
 def S()
+puts 'in S'
+puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
     	$p_index+=1
 	S1()
@@ -96,6 +100,8 @@ end
 end
 #-------------------------------
 def S1()
+puts 'in S1'
+puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
     S()
     if($p_stream[$p_index].id == 'T_RPAR')
@@ -121,14 +127,18 @@ end
 end
 #------------------------------
 def S2()
+puts 'in S2'
+puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
     S()
+    return
 elsif($p_stream[$p_index].id == 'T_RPAR')
-return
+    return
 elsif(isAtom($p_stream[$p_index].id) == true)
-    S2() 
+    S()
+    return 
 elsif($p_stream[$p_index].id == '$')
-return
+    return
 else
 return "ERROR"
 end
@@ -139,10 +149,10 @@ t_stream = lexer(s_file.to_s)
 eof = Tokens.new('T_EOF','$')
 t_stream << eof
 $p_stream = t_stream
-
 $p_stream.each { |i| puts i.id }
-$p_index = 0
+$p_index = 1
 F()
+puts $p_index
 end
 
 parser(ARGV[0].to_s)
