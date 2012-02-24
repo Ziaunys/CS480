@@ -82,7 +82,8 @@ if($p_stream[$p_index].id == 'T_LPAR')
 	return puts "ERROR"
 	end
 else
-return puts "ERROR"
+puts "ERROR"
+Process.exit
 end
 end
 #-------------------------------
@@ -93,9 +94,11 @@ if($p_stream[$p_index].id == 'T_LPAR')
     	$p_index+=1
 	S1()
 elsif(isAtom($p_stream[$p_index].id) == true)
+    $p_index+=1
     S2()   
 else
-return puts "ERROR" 
+puts "ERROR" 
+Process.exit
 end
 end
 #-------------------------------
@@ -108,7 +111,8 @@ if($p_stream[$p_index].id == 'T_LPAR')
 	$p_index+=1
 	return
     else
-    return puts "ERROR"
+    puts "ERROR"
+    Process.exit
     end
 elsif($p_stream[$p_index].id == 'T_RPAR')
     $p_index+=1
@@ -119,10 +123,12 @@ elsif(isAtom($p_stream[$p_index].id) == true)
     if($p_stream[$p_index].id == 'T_RPAR')
 	index+=1
     else
-    return puts "ERROR"
+    puts "ERROR"
+    Process.exit
     end  
-else
-return puts "ERROR"
+else 
+puts "ERROR"
+Process.exit
 end
 end
 #------------------------------
@@ -140,7 +146,8 @@ elsif(isAtom($p_stream[$p_index].id) == true)
 elsif($p_stream[$p_index].id == '$')
     return
 else
-return "ERROR"
+pus "ERROR"
+Process.exit
 end
 end
 
