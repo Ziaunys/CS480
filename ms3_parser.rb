@@ -91,7 +91,7 @@ end
 def S()
 puts 'in S'
 puts $p_stream[$p_index]
-if($p_stream[$p_index].id == 'T_LPAR')
+if($p_stream[$p_index].id == 'T_RPAR')
     	$p_index+=1
 	S1()
 elsif(isAtom($p_stream[$p_index].id) == true)
