@@ -43,6 +43,8 @@ when 'T_ADD'
 return true
 when 'T_SUB'
 return true
+when 'T_MUL'
+return true
 when 'T_DIV'
 return true
 when 'T_MOD'
@@ -97,8 +99,10 @@ if($p_stream[$p_index].id == 'T_LPAR')
 	S1()
 elsif(isAtom($p_stream[$p_index].id) == true)
     $p_index+=1
-    S2()   
+    S2()  
+   puts 'aha!' 
 else
+puts 'or here?'
 puts "ERROR" 
 Process.exit
 end
@@ -119,6 +123,7 @@ if($p_stream[$p_index].id == 'T_LPAR')
 elsif($p_stream[$p_index].id == 'T_RPAR')
     $p_index+=1
     S2()
+    puts 'in here'
     return
 elsif(isAtom($p_stream[$p_index].id) == true)
     S() 
@@ -141,14 +146,16 @@ if($p_stream[$p_index].id == 'T_LPAR')
     S()
     return
 elsif($p_stream[$p_index].id == 'T_RPAR')
-    return
+    puts 'lol?'
+    return 
 elsif(isAtom($p_stream[$p_index].id) == true)
     S()
     return 
 elsif($p_stream[$p_index].id == '$')
     return
 else
-pus "ERROR"
+puts 'here?'
+puts "ERROR"
 Process.exit
 end
 end
