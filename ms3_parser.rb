@@ -45,42 +45,100 @@ when 'T_DIG'
 return true
 when 'T_BOOL'
 return true
+when 'T_ADD'
+return true
+when 'T_SUB'
+return true
+when 'T_DIV'
+return true
+when 'T_MOD'
+return true
+when 'T_POW'
+return true
 else
 return false
 end
 end
 
-def F(t_stream,index)
-T(t_stream,index)
-expect('$')
+def F()
+if(p_stream[p_index].id == 'L_PAR') 
+T()
+F()
+elsif(p_stream[p_index].id == '$')
+return 'Parse complete. .'
 end
-
-def T(t_stream,index)
-case t_stream[index].id
+end
+#-------------------------------
+def T()
+case p_stream[p_index].id
 when 'T_LPAR'
-S(t_stream,index+1)
-expect('T_RPAR')
+	S()
+	if(p_stream[p_index+1] == 'R_PAR')
+	p_index++
+	else
+	return puts "ERROR"
+	end
+else
+return puts "ERROR"
+end
+end
+#-------------------------------
+def S()
+if(p_stream[p_index] == 'T_LPAR')
+    	p_index++
+	S1()
+elsif(isAtom(p_stream[index].id == true)
+    S2()   
+else
+return puts "ERROR" 
+end
+end
+#-------------------------------
+def S1()
+if(p_stream[p_index] == 'T_LPAR')
+    S()
+    if(p_stream[p_index] == 'T_RPAR')
+	p_index++
+	return
+    else
+    return puts "ERROR"
+    end
+elsif(p_stream[p_index] == 'T_RPAR')
+    p_index++
+    S2()
+    return
+elsif(isAtom(p_stream[p_index].id == true)
+    S() 
+    if(p_stream[p_index] == 'T_RPAR')
+	index++
+    else
+    return puts "ERROR"
+    end  
+else
+return puts "ERROR"
+end
+end
+#------------------------------
+def S2()
+if(p_stream[p_index] == 'T_LPAR')
+    S()
+elsif(p_stream[p_index] == 'T_RPAR')
+return
+elsif(isAtom(p_stream[p_index].id == true)
+    S2() 
+elsif(p_stream[p_index] == '$')
+return
 else
 return "ERROR"
 end
-end
 
-def S(t_stream,index)
-case t_stream[index]
-when 'T_LPAR'
-    case t_stream[index+1].id
-    when 'T_LPAR'
-
-if(isBinOp(t_stream[index].id == true)
-
-elsif(isAtom(t_stream[index].id == true)
-
-end
 
 def parser(s_file)
 t_stream = lexer(s_file.to_s)
 t_stream << '$'
-if(t_stream[0] == 'T_LPAR')
+$p_stream = t_stream
+$index = 0
+F(p_stream,index)
 end
 end
 #t_stream.each { |i| puts i.id }
