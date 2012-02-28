@@ -51,9 +51,15 @@ when 'T_MOD'
 return true
 when 'T_POW'
 return true
-when 'T_WHILE'
+when 'T_WHL'
 return true
 when 'T_IF'
+return true
+when 'T_GT'
+return true
+when 'T_EQ'
+return true
+when 'T_ASS'
 return true
 else
 return false
@@ -72,7 +78,6 @@ else
 return puts "ERROR"
 end
 end
-#-------------------------------
 def T()
 puts 'in T'
 puts $p_stream[$p_index]
@@ -90,7 +95,6 @@ puts "ERROR"
 Process.exit
 end
 end
-#-------------------------------
 def S()
 puts 'in S'
 puts $p_stream[$p_index]
@@ -129,6 +133,7 @@ elsif(isAtom($p_stream[$p_index].id) == true)
     S() 
     if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
+	S2()
     else
     puts "ERROR"
     Process.exit
