@@ -29,6 +29,16 @@ return false
 end
 end
 
+def isType(token)
+case token
+when 'T_FLOAT'
+return true
+when 'T_INT'
+return true
+else
+return false
+end
+end
 def isAtom(token)
 case token
 when 'T_ID'
@@ -67,91 +77,98 @@ end
 end
 
 def F()
+#puts 'before compare in F'
+#puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR') 
-puts 'in F'
-puts $p_stream[$p_index]
+#puts 'in F'
+#puts $p_stream[$p_index]
 T()
 F()
+return
 elsif($p_stream[$p_index].id == 'T_EOF')
-return 'Parse complete. .'
+return puts 'Exit without errors. .'
 else
-return puts "ERROR"
+return #puts "ERROR"
 end
 end
 def T()
-puts 'in T'
-puts $p_stream[$p_index]
+#puts 'in T'
+#puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
 	$p_index+=1
 	S()
 	if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
+	#puts 'returning to F'
+	return
 	else
-        puts "ERROR"
+        #puts "ERROR"
 	Process.exit
 	end
 else
-puts "ERROR"
+#puts "ERROR"
 Process.exit
 end
 end
 def S()
-puts 'in S'
-puts $p_stream[$p_index]
+#puts 'in S'
+#puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
     	$p_index+=1
 	S1()
 elsif(isAtom($p_stream[$p_index].id) == true)
     $p_index+=1
     S2()  
-   puts 'aha!' 
+   #puts 'aha!' 
+   return
 else
-puts 'or here?'
-puts "ERROR" 
+#puts 'or here?'
+#puts "ERROR" 
 Process.exit
 end
 end
 #-------------------------------
 def S1()
-puts 'in S1'
-puts $p_stream[$p_index]
+#puts 'in S1'
+#puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
     S()
     if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
 	return
     else
-    puts "ERROR"
+    #puts "ERROR"
     Process.exit
     end
 elsif($p_stream[$p_index].id == 'T_RPAR')
     $p_index+=1
     S2()
-    puts 'in here'
+    #puts 'in here'
     return
 elsif(isAtom($p_stream[$p_index].id) == true)
     S() 
     if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
 	S2()
+	return
     else
-    puts "ERROR"
+    #puts "ERROR"
     Process.exit
     end  
 else 
-puts "ERROR"
+#puts "ERROR"
 Process.exit
 end
 end
 #------------------------------
 def S2()
-puts 'in S2'
-puts $p_stream[$p_index]
+#puts 'in S2'
+#puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
     S()
     return
 elsif($p_stream[$p_index].id == 'T_RPAR')
-    puts 'lol?'
+    #puts 'lol?'
     return 
 elsif(isAtom($p_stream[$p_index].id) == true)
     S()
@@ -159,8 +176,8 @@ elsif(isAtom($p_stream[$p_index].id) == true)
 elsif($p_stream[$p_index].id == '$')
     return
 else
-puts 'here?'
-puts "ERROR"
+#puts 'here?'
+#puts "ERROR"
 Process.exit
 end
 end
@@ -170,10 +187,10 @@ t_stream = lexer(s_file.to_s)
 eof = Tokens.new('T_EOF','$')
 t_stream << eof
 $p_stream = t_stream
-$p_stream.each { |i| puts i.id }
+#$p_stream.each { |i| puts i.id }
 $p_index = 1
 F()
-puts $p_index
+#puts $p_index
 end
 
 parser(ARGV[0].to_s)
