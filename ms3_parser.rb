@@ -21,11 +21,7 @@ when 'T_POW'
 return true
 when 'T_EQ'
 return true
-#when 'T_GT'
-#return true
 when 'T_LT'
-return true
-when 'T_ASS'
 return true
 else
 return false
@@ -91,15 +87,12 @@ else
 return false
 end
 end
-
-
 #Make function which calls all type checking function to reduce redundancy.
 
-def isType(token)
-
+def type_atom(token)
 end
 
-def F(s_index)
+def F()
 #puts 'before compare in F'
 #puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR') 
@@ -114,12 +107,12 @@ else
 return #puts "ERROR"
 end
 end
-def T(s_index)
+def T()
 #puts 'in T'
 #puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
 	$p_index+=1
-	S(s_index)
+	S()
 	if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
 	#puts 'returning to F'
@@ -133,16 +126,17 @@ else
 Process.exit
 end
 end
-def S(s_index)
+def S()
 #puts 'in S'
 #puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
     	$p_index+=1
-	S1(s_index)
+	S1()
 elsif(isAtom($p_stream[$p_index].id) == true)
-    #ADD TO STACK HERE. CALL TYPE FUNCTION
+    #ADD TO STACK HERE. CALL TYPE FUNCTION    
+    puts $p_stream[$p_index].value
     $p_index+=1
-    S2(s_index)  
+    S2()  
    #puts 'aha!' 
    return
 else
@@ -151,11 +145,11 @@ else
 Process.exit
 end
 end
-def S1(s_index)
+def S1()
 #puts 'in S1'
 #puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
-    S(s_index)
+    S()
     if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
 	return
@@ -165,15 +159,15 @@ if($p_stream[$p_index].id == 'T_LPAR')
     end
 elsif($p_stream[$p_index].id == 'T_RPAR')
     $p_index+=1
-    S2(s_index)
+    S2()
     #puts 'in here'
     return
-elsif(isAtom($p_stream[$p_index].id) == true)
-    $s_tree << $p_stream[$p_index]    
-    S(s_index) 
+elsif(isAtom($p_stream[$p_index].id) == true)   
+        puts $p_stream[$p_index].value    
+	S() 
     if($p_stream[$p_index].id == 'T_RPAR')
 	$p_index+=1
-	S2(s_index)
+	S2()
 	return
     else
     #puts "ERROR"
@@ -184,16 +178,16 @@ else
 Process.exit
 end
 end
-def S2(s_index)
+def S2()
 #puts 'in S2'
 #puts $p_stream[$p_index]
 if($p_stream[$p_index].id == 'T_LPAR')
-    S(s_index)
+    S()
     return
 elsif($p_stream[$p_index].id == 'T_RPAR')
-    #puts 'lol?'
     return 
 elsif(isAtom($p_stream[$p_index].id) == true)
+	puts $p_stream[$p_index].value
 	S()
     return 
 elsif($p_stream[$p_index].id == '$')
@@ -205,19 +199,36 @@ Process.exit
 end
 end
 
+def parse_tree()
+   $p_stream.length.times do |i|
+       if(isBinOp($p_stream[i].id) == true)
+           $operator_stack << $p_stream[i].value
+       elsif( $p_stream[i].id != 'T_LPAR' && $p_stream[i].id != 'T_RPAR')
+           $out_expr << $p_stream[i].value
+       while($operator_stack.empty? == false && $operator_stack[$operator_stack.length-1] == 'done')
+           $operator_stack.pop
+	   $out_expr << $operator_stack[$operator_stack.length-1]
+	   $operator_stack.pop
+       end
+       $operator_stack << 'done'
+       end
+end
+end
 def parser(s_file)
-t_stream = lexer(s_file.to_s)
-eof = Tokens.new('T_EOF','$')
-t_stream << eof
-$p_stream = t_stream
-$p_stream.each { |i| puts i.id }
-$p_index = 1
-$operand_stack = []
-$operator_stack = []
-F()
-$s_tree.each { |i| puts i.value }
-traverse($s_tree,0)
-#puts $p_index
+    t_stream = lexer(s_file.to_s)
+    eof = Tokens.new('T_EOF','$')
+    t_stream << eof
+    $p_stream = t_stream
+    $p_stream.delete_at(0)
+    $p_index = 0
+    $operand_stack = []
+    $operator_stack = []
+    $out_expr = []
+    F()
+    $p_index = 0
+    parse_tree()
+       
+    puts $out_expr.compact
 end
 
 parser(ARGV[0].to_s)
