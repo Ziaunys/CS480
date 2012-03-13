@@ -249,7 +249,7 @@ def parse_tree()
                $operator_stack.pop
 	       puts 'in here'
 		if $s_flag > 0
-		    $operator_stack[$operator_stack.length-1] = "s+"
+		    $operator_stack[$operator_stack.length-1] = "s+ type cr"
                 end
 	       $out_expr << $operator_stack.pop
            end
@@ -278,9 +278,11 @@ def parser(s_file)
     puts "code generation: "
     parse_tree()
     puts "output: "
-    $out_expr << "." 
+    $out_expr << ".s" 
     puts $out_expr.compact
     out_file = File.new("out.fs", "w")
+    
+    $out_expr.each { |i| out_file << i+"\s" }
 end
 
 parser(ARGV[0].to_s)
