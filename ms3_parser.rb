@@ -141,7 +141,7 @@ if($p_stream[$p_index].id == 'T_LPAR')
 	S1()
 elsif(isAtom($p_stream[$p_index].id) == true)
     #ADD TO STACK HERE. CALL TYPE FUNCTION    
-    puts $p_stream[$p_index].value
+ #   puts $p_stream[$p_index].value
     $p_index+=1
     S2()  
    #puts 'aha!' 
@@ -194,7 +194,7 @@ if($p_stream[$p_index].id == 'T_LPAR')
 elsif($p_stream[$p_index].id == 'T_RPAR')
     return 
 elsif(isAtom($p_stream[$p_index].id) == true)
-	puts $p_stream[$p_index].value
+#	puts $p_stream[$p_index].value
 	S()
     return 
 elsif($p_stream[$p_index].id == '$')
@@ -213,7 +213,8 @@ def parse_tree()
            return 
        end
        if(isBinOp($p_stream[i].id) == true)
-           case $p_stream[i].id
+          puts 'is bin op'
+	   case $p_stream[i].id
 	   when 'T_MOD'
  	       if $f_flag == 1
 	           $p_stream[i].value = "fmod"
@@ -223,9 +224,11 @@ def parse_tree()
 	   else
 	   if $f_flag == 1
 	       $p_stream[i].value = "f" + $p_stream[i].value 
-	       end
+	   end
 	   end
 	$operator_stack << $p_stream[i].value
+	puts $operator_stack.last
+	puts ' ^ last '
        elsif( $p_stream[i].id != 'T_LPAR' && $p_stream[i].id != 'T_RPAR')
 	#    puts $p_stream[i].value + "hi"
 	       case $p_stream[i].id
@@ -237,23 +240,23 @@ def parse_tree()
 		   end
 	       when 'T_STR'
 	            $p_stream[i].value = "s"+ $p_stream[i].value.sub(/"/,"\"\s")
-	            if $operator_stack.last == '+'
-		        $operator_stack[$operator_stack.length] == "s" + $operator_stack.last
-		    end
+	            $s_flag += 1
 	       else
-	           return puts "ERROR"
+		   puts $p_stream[i].value + " in here"
 	       end
-	   end
-	   
 	   $out_expr << $p_stream[i].value
-       while($operator_stack.empty? == false && $operator_stack.last == 'done')
-           $operator_stack.pop
-	   $out_expr << $operator_stack.pop
+           while($operator_stack.empty? == false && $operator_stack.last == 'done')
+               $operator_stack.pop
+	       puts 'in here'
+		if $s_flag > 0
+		    $operator_stack[$operator_stack.length-1] = "s+"
+                end
+	       $out_expr << $operator_stack.pop
+           end
+               $operator_stack << 'done'
        end
-       $operator_stack << 'done'
-       end
-   end
-
+    end
+end
 def parser(s_file)
     t_stream = lexer(s_file.to_s)
     eof = Tokens.new('T_EOF','$')
@@ -271,7 +274,10 @@ def parser(s_file)
 	Process.exit
     end
     $f_flag = 0
+    $s_flag = 0
+    puts "code generation: "
     parse_tree()
+    puts "output: "
     $out_expr << "." 
     puts $out_expr.compact
     out_file = File.new("out.fs", "w")
