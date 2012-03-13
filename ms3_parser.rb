@@ -1,6 +1,5 @@
 #!/usr/local/bin/ruby -w
 require 'ms2_scanner.rb'
-require 'ms4_forthgen.rb'
 # Program: Parser for Milestone 3 in CS480
 # This program will define the parser and include the lexical analyzer as a sub-routine.
 
@@ -22,6 +21,14 @@ return true
 when 'T_EQ'
 return true
 when 'T_LT'
+return true
+when 'T_OR'
+return true
+when 'T_AND'
+return true
+when 'T_NOT'
+return true
+when 'T_NEG'
 return true
 else
 return false
@@ -52,6 +59,9 @@ case token
 when 'T_ID'
 return true
 when 'T_IDIG'
+return true
+when 'T_FDIG'
+return true
 return true
 when 'T_DIG'
 return true
@@ -89,8 +99,6 @@ end
 end
 #Make function which calls all type checking function to reduce redundancy.
 
-def type_atom(token)
-end
 
 def F()
 #puts 'before compare in F'
@@ -118,7 +126,7 @@ if($p_stream[$p_index].id == 'T_LPAR')
 	#puts 'returning to F'
 	return
 	else
-        #puts "ERROR"
+        puts "ERROR"
 	Process.exit
 	end
 else
@@ -141,7 +149,7 @@ elsif(isAtom($p_stream[$p_index].id) == true)
    return
 else
 #puts 'or here?'
-#puts "ERROR" 
+puts "ERROR" 
 Process.exit
 end
 end
@@ -154,7 +162,7 @@ if($p_stream[$p_index].id == 'T_LPAR')
 	$p_index+=1
 	return
     else
-    #puts "ERROR"
+    puts "ERROR"
     Process.exit
     end
 elsif($p_stream[$p_index].id == 'T_RPAR')
@@ -170,11 +178,11 @@ elsif(isAtom($p_stream[$p_index].id) == true)
 	S2()
 	return
     else
-    #puts "ERROR"
+    puts "ERROR"
     Process.exit
     end  
 else 
-#puts "ERROR"
+puts "ERROR"
 Process.exit
 end
 end
@@ -200,15 +208,42 @@ end
 end
 
 def parse_tree()
+   $p_stream.each { |i| $f_flag = 1 if i.id == 'T_FDIG' } 
    $p_stream.length.times do |i|
+       if($p_stream[i].id == 'T_EOF')
+           return 
+       end
        if(isBinOp($p_stream[i].id) == true)
-           $operator_stack << $p_stream[i].value
+           case $p_stream[i].id
+	   when 'T_MOD'
+ 	       if $f_flag == 1
+	           $p_stream[i].value = "fmod"
+	           else
+	           $p_stream[i].value = "mod"
+	       end
+	   else
+	   if $f_flag == 1
+	       $p_stream[i].value = "f" + $p_stream[i].value 
+	       end
+	   end
+	$operator_stack << $p_stream[i].value
        elsif( $p_stream[i].id != 'T_LPAR' && $p_stream[i].id != 'T_RPAR')
-           $out_expr << $p_stream[i].value
-       while($operator_stack.empty? == false && $operator_stack[$operator_stack.length-1] == 'done')
+	#    puts $p_stream[i].value + "hi"
+	   if $f_flag == 1 
+	       case $p_stream[i].id
+	       when 'T_FDIG'
+	           $p_stream[i].value.gsub(/\..*/,"e")
+	       when 'T_IDIG'
+		    $p_stream[i].value = $p_stream[i].value + "e"
+	       else
+	           return puts "ERROR"
+	       end
+	   end
+	   
+	   $out_expr << $p_stream[i].value
+       while($operator_stack.empty? == false && $operator_stack.last == 'done')
            $operator_stack.pop
-	   $out_expr << $operator_stack[$operator_stack.length-1]
-	   $operator_stack.pop
+	   $out_expr << $operator_stack.pop
        end
        $operator_stack << 'done'
        end
@@ -220,15 +255,17 @@ def parser(s_file)
     t_stream << eof
     $p_stream = t_stream
     $p_stream.delete_at(0)
+    $p_stream.each { |i| puts i.id} 
     $p_index = 0
     $operand_stack = []
     $operator_stack = []
     $out_expr = []
     F()
-    $p_index = 0
+    $f_flag = 0
     parse_tree()
-       
+    $out_expr << "." 
     puts $out_expr.compact
+    out_file = File.new("out.fs", "w")
 end
 
 parser(ARGV[0].to_s)
