@@ -62,7 +62,6 @@ when 'T_IDIG'
 return true
 when 'T_FDIG'
 return true
-return true
 when 'T_DIG'
 return true
 when 'T_BOOL'
@@ -110,9 +109,9 @@ T()
 F()
 return
 elsif($p_stream[$p_index].id == 'T_EOF')
-return puts 'Exit without errors. .'
+return true
 else
-return #puts "ERROR"
+return false
 end
 end
 def T()
@@ -229,12 +228,18 @@ def parse_tree()
 	$operator_stack << $p_stream[i].value
        elsif( $p_stream[i].id != 'T_LPAR' && $p_stream[i].id != 'T_RPAR')
 	#    puts $p_stream[i].value + "hi"
-	   if $f_flag == 1 
 	       case $p_stream[i].id
 	       when 'T_FDIG'
 	           $p_stream[i].value.gsub(/\..*/,"e")
 	       when 'T_IDIG'
-		    $p_stream[i].value = $p_stream[i].value + "e"
+	           if $f_flag == 1     
+		       $p_stream[i].value = $p_stream[i].value + "e"
+		   end
+	       when 'T_STR'
+	            $p_stream[i].value = "s"+ $p_stream[i].value.sub(/"/,"\"\s")
+	            if $operator_stack.last == '+'
+		        $operator_stack[$operator_stack.length] == "s" + $operator_stack.last
+		    end
 	       else
 	           return puts "ERROR"
 	       end
@@ -247,8 +252,8 @@ def parse_tree()
        end
        $operator_stack << 'done'
        end
-end
-end
+   end
+
 def parser(s_file)
     t_stream = lexer(s_file.to_s)
     eof = Tokens.new('T_EOF','$')
@@ -260,7 +265,11 @@ def parser(s_file)
     $operand_stack = []
     $operator_stack = []
     $out_expr = []
-    F()
+    errors = F()
+    if errors == false
+        puts 'ERROR'
+	Process.exit
+    end
     $f_flag = 0
     parse_tree()
     $out_expr << "." 
